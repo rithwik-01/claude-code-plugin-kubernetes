@@ -1,0 +1,4 @@
+# Nothing generated lives in this repo. Run state belongs in the user's own
+# project (.claude/k8s-contributor/state/) and caches in ${CLAUDE_PLUGIN_DATA}.
+.DS_Store
+*.bak.*
