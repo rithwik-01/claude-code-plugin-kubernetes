@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "claude-code-plugin-kubernetes",
+  "description": "Claude Code plugins for Kubernetes contributors. Multi-agent issue triage, evidence-based fix verification, and a complete reference implementation of the Claude Code plugin format.",
+  "owner": {
+    "name": "Rithwik Reddy Eedula",
+    "url": "https://github.com/rithwik-01"
+  },
+  "plugins": [
+    {
+      "name": "k8s-contributor",
+      "source": "./plugins/k8s-contributor",
+      "displayName": "Kubernetes Contributor",
+      "description": "Triage, fix, and verify Kubernetes issues with a parallel agent graph. Evidence-based verification gates, and it never commits, comments, or pushes on its own.",
+      "version": "0.1.0",
+      "category": "development",
+      "tags": [
+        "claude-code",
+        "claude-code-plugin",
+        "kubernetes",
+        "k8s",
+        "triage",
+        "code-review",
+        "ai-agents",
+        "subagents",
+        "hooks",
+        "open-source",
+        "sig"
+      ],
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/rithwik-01/claude-code-plugin-kubernetes",
+      "repository": "https://github.com/rithwik-01/claude-code-plugin-kubernetes",
+      "author": {
+        "name": "Rithwik Reddy Eedula"
+      },
+      "defaultEnabled": false,
+      "keywords": [
+        "claude-code",
+        "claude-code-plugin",
+        "kubernetes",
+        "k8s",
+        "triage",
+        "code-review",
+        "ai-agents",
+        "subagents",
+        "hooks",
+        "open-source",
+        "sig"
+      ]
+    }
+  ]
+}

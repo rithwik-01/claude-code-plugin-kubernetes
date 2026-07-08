@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "k8s-contributor",
+  "displayName": "Kubernetes Contributor",
+  "version": "0.1.0",
+  "description": "Triage, fix, and verify Kubernetes issues with a parallel agent graph. Evidence-based verification gates, and it never commits, comments, or pushes on its own.",
+  "author": {
+    "name": "Rithwik Reddy Eedula",
+    "url": "https://github.com/rithwik-01"
+  },
+  "homepage": "https://github.com/rithwik-01/claude-code-plugin-kubernetes",
+  "repository": "https://github.com/rithwik-01/claude-code-plugin-kubernetes",
+  "license": "Apache-2.0",
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "kubernetes",
+    "k8s",
+    "triage",
+    "code-review",
+    "ai-agents",
+    "subagents",
+    "hooks",
+    "open-source",
+    "sig"
+  ],
+  "defaultEnabled": false,
+  "userConfig": {
+    "workspace_root": {
+      "type": "directory",
+      "title": "Workspace root",
+      "description": "Parent directory holding your cloned kubernetes/* and kubernetes-sigs/* repos. Leave blank to use the current working directory.",
+      "required": false
+    },
+    "community_docs_path": {
+      "type": "directory",
+      "title": "kubernetes/community clone",
+      "description": "Local clone of kubernetes/community, used as the source of truth for contributor guidelines. Leave blank to fetch and cache the canonical docs on first use.",
+      "required": false
+    },
+    "default_kind_cluster_name": {
+      "type": "string",
+      "title": "kind cluster name prefix",
+      "description": "Prefix for kind clusters created during cluster gates, so concurrent runs do not collide.",
+      "required": false,
+      "default": "k8s-fix"
+    },
+    "max_review_rounds": {
+      "type": "number",
+      "title": "Max review rounds",
+      "description": "Ceiling on the plan and review feedback loops before the run escalates to you instead of looping.",
+      "required": false,
+      "default": 3,
+      "min": 1,
+      "max": 5
+    },
+    "require_approval_before_commit": {
+      "type": "boolean",
+      "title": "Require approval before commit (always on)",
+      "description": "Always true. Setting this to false is NOT supported: the guard-destructive hook blocks commits, pushes, and GitHub comments regardless, and there is no bypass. The option exists only so this description can say so.",
+      "required": false,
+      "default": true
+    }
+  }
+}
