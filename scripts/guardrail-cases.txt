@@ -1,0 +1,15 @@
+BLOCK|git commit -m "fix"
+BLOCK|bash -c "make test && git commit -am wip"
+BLOCK|git push
+BLOCK|echo $(git push origin HEAD)
+BLOCK|make verify && git push
+BLOCK|gh pr create --fill
+BLOCK|gh pr comment 1 --body "lgtm"
+BLOCK|gh issue comment 1 --body "/triage accepted"
+BLOCK|gh api -X POST /repos/o/r/issues/1/comments
+BLOCK|echo "/close" | gh issue comment 1 -F -
+ALLOW|git status
+ALLOW|git diff
+ALLOW|git stash push -- pkg/foo/bar.go
+ALLOW|go test ./...
+ALLOW|gh issue view 1
