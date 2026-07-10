@@ -1,0 +1,65 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/guard-destructive.sh",
+            "statusMessage": "checking for commit/publish actions",
+            "timeout": 20
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/guard-deps.sh",
+            "statusMessage": "checking for dependency changes",
+            "timeout": 20
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/guard-deps.sh",
+            "statusMessage": "checking for dependency changes",
+            "timeout": 20
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/guard-scope.sh",
+            "statusMessage": "checking write scope",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/post-edit-gofmt.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/log-subagent.sh",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}
