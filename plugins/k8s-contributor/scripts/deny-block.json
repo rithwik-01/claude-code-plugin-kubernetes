@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git tag:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git filter-branch:*)",
+      "Bash(git am:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr comment:*)",
+      "Bash(gh pr review:*)",
+      "Bash(gh pr edit:*)",
+      "Bash(gh pr close:*)",
+      "Bash(gh pr ready:*)",
+      "Bash(gh issue comment:*)",
+      "Bash(gh issue close:*)",
+      "Bash(gh issue edit:*)",
+      "Bash(gh issue create:*)",
+      "Bash(gh issue reopen:*)",
+      "Bash(gh release:*)",
+      "Bash(gh api:*)",
+      "Bash(go get:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(go mod vendor:*)",
+      "Bash(go mod edit:*)",
+      "Edit(**/vendor/**)",
+      "Edit(**/go.mod)",
+      "Edit(**/go.sum)",
+      "Edit(**/third_party/**)",
+      "Edit(**/.git/**)"
+    ]
+  }
+}
