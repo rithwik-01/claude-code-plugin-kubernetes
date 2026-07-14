@@ -1,0 +1,108 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq shellcheck
+
+      - name: Syntax-check every shell script
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r f; do
+            if bash -n "$f"; then echo "ok   $f"; else echo "FAIL $f"; fail=1; fi
+          done < <(find . -name '*.sh' -not -path './.git/*')
+          exit "$fail"
+
+      - name: shellcheck
+        # Informational: these scripts target bash 3.2 (macOS system bash) and
+        # deliberately use constructs shellcheck flags as style. A real defect
+        # shows up in the hook and gate suites below, which do gate the build.
+        continue-on-error: true
+        run: |
+          find . -name '*.sh' -not -path './.git/*' -print0 \
+            | xargs -0 shellcheck --severity=error --shell=bash || true
+
+      - name: Validate every JSON document
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r f; do
+            if jq -e . "$f" >/dev/null; then echo "ok   $f"; else echo "FAIL $f"; fail=1; fi
+          done < <(find . -name '*.json' -not -path './.git/*')
+          exit "$fail"
+
+      - name: No absolute or personal paths may ship
+        run: |
+          set -euo pipefail
+          # A path under /Users or /home baked into a skill breaks the plugin on
+          # every machine that is not the author's.
+          if grep -rnE '/(Users|home)/[a-z0-9_-]+/' \
+               --include='*.md' --include='*.sh' --include='*.json' \
+               plugins/ docs/ examples/ README.md 2>/dev/null; then
+            echo "FAIL: an absolute personal path is present"
+            exit 1
+          fi
+          echo "ok: no absolute personal paths"
+
+      - name: Plugin-owned scripts must resolve via CLAUDE_PLUGIN_ROOT
+        run: |
+          set -euo pipefail
+          # ${CLAUDE_PROJECT_DIR} points at the user's repo, not the plugin
+          # cache, so a plugin script referenced through it will not be found.
+          if grep -rn 'CLAUDE_PROJECT_DIR}/scripts\|CLAUDE_PROJECT_DIR}/hooks' plugins/ 2>/dev/null; then
+            echo "FAIL: a plugin-owned script is referenced via CLAUDE_PROJECT_DIR"
+            exit 1
+          fi
+          echo "ok: plugin scripts resolve via CLAUDE_PLUGIN_ROOT"
+
+      - name: Plugin agents must not carry forbidden frontmatter
+        run: |
+          set -euo pipefail
+          # hooks / mcpServers / permissionMode are ignored for plugin-shipped
+          # agents; their presence means the author expected an effect they
+          # will not get.
+          if grep -rnE '^[[:space:]]*(hooks|mcpServers|permissionMode)[[:space:]]*:' \
+               plugins/k8s-contributor/agents/ 2>/dev/null; then
+            echo "FAIL: forbidden agent frontmatter"
+            exit 1
+          fi
+          echo "ok: no forbidden agent frontmatter"
+
+      - name: Hook unit tests
+        run: bash plugins/k8s-contributor/hooks/scripts/test-hooks.sh
+
+      - name: Guardrail proof — no permission rules configured
+        # The approval guarantee rests entirely on this hook, so a regression
+        # here must fail the build.
+        run: bash scripts/prove-guardrails.sh --guard plugins/k8s-contributor/hooks/scripts/guard-destructive.sh
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: claude plugin validate --strict
+        run: claude plugin validate ./plugins/k8s-contributor --strict
+
+      - name: Marketplace version matches plugin version
+        run: |
+          set -euo pipefail
+          p=$(jq -r '.version' plugins/k8s-contributor/.claude-plugin/plugin.json)
+          m=$(jq -r '.plugins[] | select(.name=="k8s-contributor") | .version' .claude-plugin/marketplace.json)
+          echo "plugin.json=$p  marketplace.json=$m"
+          [ "$p" = "$m" ] || { echo "FAIL: version mismatch — users get no update until both are bumped"; exit 1; }
+          grep -q "\[$p\]" plugins/k8s-contributor/CHANGELOG.md \
+            || { echo "FAIL: no CHANGELOG entry for $p"; exit 1; }
+          echo "ok: versions agree and CHANGELOG has an entry"
