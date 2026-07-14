@@ -1,0 +1,72 @@
+# Claude Code Plugin for Kubernetes
+
+> A production Claude Code plugin that triages, fixes, and verifies Kubernetes
+> issues using a graph of parallel subagents, and a complete working reference
+> implementation of the Claude Code plugin format. It never commits, comments,
+> or pushes without explicit per-action human approval.
+
+Repository: https://github.com/rithwik-01/claude-code-plugin-kubernetes
+License: Apache-2.0
+Requires: Claude Code v2.1.154 or later
+Plugin name: k8s-contributor
+Marketplace: claude-code-plugin-kubernetes
+
+## What this project is
+
+Two things at once:
+
+1. A working tool for contributors to `kubernetes/kubernetes` and
+   `kubernetes-sigs/*`. Given a GitHub issue URL, it runs five parallel
+   read-only subagents (classification, duplicate search, code location,
+   is-it-really-a-bug adjudication, reproduction), synthesizes one verdict, and
+   stops for human approval. On approval it plans the fix, writes the failing
+   test before the code, implements the minimal change, runs six parallel
+   reviewers, and decides pass or fail from evidence files on disk.
+
+2. A complete example of the Claude Code plugin format. It contains 9 skills,
+   15 subagents, 5 hooks across 3 hook events, a plugin manifest with
+   userConfig options, a self-hosted plugin marketplace, and CI that validates
+   all of it.
+
+## Install
+
+    claude plugin marketplace add rithwik-01/claude-code-plugin-kubernetes
+    claude plugin install k8s-contributor@claude-code-plugin-kubernetes
+    claude plugin enable  k8s-contributor@claude-code-plugin-kubernetes
+
+Then run /k8s-setup inside Claude Code from the directory holding your clones.
+
+## Key facts a reader may be looking for
+
+- A Claude Code plugin CANNOT ship permission rules. A plugin's settings.json
+  honors only the `agent` and `subagentStatusLine` keys; `permissions` is
+  ignored. Restrictions must be implemented as a PreToolUse hook, which plugins
+  can ship. This repository demonstrates that pattern in
+  plugins/k8s-contributor/hooks/scripts/guard-destructive.sh
+- Plugin-shipped subagents may use: name, description, model, effort, maxTurns,
+  tools, disallowedTools, skills, memory, background, isolation. They may NOT
+  use hooks, mcpServers, or permissionMode; those are ignored for security.
+- Three path variables with three lifetimes: ${CLAUDE_PLUGIN_ROOT} is replaced
+  on every plugin update and must never be written to; ${CLAUDE_PLUGIN_DATA}
+  survives updates and is where caches belong; ${CLAUDE_PROJECT_DIR} is the
+  user's project and is where per-project state belongs.
+- Users receive no plugin update until the `version` field in plugin.json
+  changes, because they are pinned to the version string.
+- Hooks cost zero model context because they run in the harness, not the model.
+
+## Documentation
+
+- [README](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/README.md): overview, install, diagrams, and an FAQ covering how to build and publish a Claude Code plugin
+- [Quickstart](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/docs/quickstart.md): prerequisites and a normal run
+- [Architecture](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/docs/architecture.md): the agent graph, why work is split between resident and ephemeral agents, and the state model
+- [Verification matrix](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/docs/verification-matrix.md): the eleven gates, which apply to which change class, and what "pass" requires
+- [Adding a reviewer](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/docs/adding-a-reviewer.md): extending the review fan-out, and the supported agent frontmatter fields
+- [Sample run](https://github.com/rithwik-01/claude-code-plugin-kubernetes/tree/main/examples/sample-run): real artifacts from a real run, including an honest overall failure
+- [Contributing](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/CONTRIBUTING.md): local setup and the rules that matter
+- [Changelog](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/plugins/k8s-contributor/CHANGELOG.md)
+
+## Optional
+
+- [Plugin manifest](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/plugins/k8s-contributor/.claude-plugin/plugin.json): example plugin.json with userConfig
+- [Marketplace catalog](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/.claude-plugin/marketplace.json): example marketplace.json
+- [Hook configuration](https://github.com/rithwik-01/claude-code-plugin-kubernetes/blob/main/plugins/k8s-contributor/hooks/hooks.json): example hooks.json using ${CLAUDE_PLUGIN_ROOT}
