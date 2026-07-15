@@ -1,0 +1,67 @@
+{
+  "run": "gwctl/110",
+  "base": "56692a9d03860d00298a27d2ff583584cd7fddd7",
+  "head": "56692a9d03860d00298a27d2ff583584cd7fddd7",
+  "profile": "gwctl",
+  "change_class": "cli-tool",
+  "applicable_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G6",
+    "G10"
+  ],
+  "missing_gates": [
+    "G1",
+    "G2",
+    "G6",
+    "G10"
+  ],
+  "blocking_gates": [],
+  "pass_without_evidence": [],
+  "gates": [
+    {
+      "id": "G0",
+      "name": "build",
+      "status": "pass",
+      "command": "go build ./...",
+      "exit_code": 0,
+      "expect_fail": false,
+      "evidence": "evidence/G0-build.log",
+      "reason": "",
+      "duration_s": 15,
+      "workdir": "<workspace>/gwctl",
+      "recorded_at": "2026-08-18T01:27:13Z"
+    },
+    {
+      "id": "G3",
+      "name": "unit-race",
+      "status": "pass",
+      "command": "go test -race -count=1 ./...",
+      "exit_code": 0,
+      "expect_fail": false,
+      "evidence": "evidence/G3-unit-race.log",
+      "reason": "",
+      "duration_s": 22,
+      "workdir": "<workspace>/gwctl",
+      "recorded_at": "2026-08-18T01:27:35Z"
+    },
+    {
+      "id": "G4",
+      "name": "diff-hygiene",
+      "status": "pass",
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/lib/diff-hygiene.sh 'HEAD'",
+      "exit_code": 0,
+      "expect_fail": false,
+      "evidence": "evidence/G4-diff-hygiene.log",
+      "reason": "",
+      "duration_s": 0,
+      "workdir": "<workspace>/gwctl",
+      "recorded_at": "2026-08-18T01:27:35Z"
+    }
+  ],
+  "overall": "fail",
+  "generated_at": "2026-08-18T01:27:35Z"
+}

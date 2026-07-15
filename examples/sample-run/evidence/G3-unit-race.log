@@ -1,0 +1,30 @@
+### gate:     G3 (unit-race)
+### command:  go test -race -count=1 ./...
+### workdir:  <workspace>/gwctl
+### expect:   zero exit
+### started:  2026-08-18T01:27:13Z
+###
+?   	sigs.k8s.io/gwctl	[no test files]
+?   	sigs.k8s.io/gwctl/cmd	[no test files]
+ok  	sigs.k8s.io/gwctl/cmd/analyze	1.524s
+?   	sigs.k8s.io/gwctl/cmd/apply	[no test files]
+?   	sigs.k8s.io/gwctl/cmd/delete	[no test files]
+ok  	sigs.k8s.io/gwctl/cmd/get	1.737s
+?   	sigs.k8s.io/gwctl/pkg/common	[no test files]
+?   	sigs.k8s.io/gwctl/pkg/extension	[no test files]
+?   	sigs.k8s.io/gwctl/pkg/extension/directlyattachedpolicy	[no test files]
+?   	sigs.k8s.io/gwctl/pkg/extension/gatewayeffectivepolicy	[no test files]
+?   	sigs.k8s.io/gwctl/pkg/extension/notfoundrefvalidator	[no test files]
+?   	sigs.k8s.io/gwctl/pkg/extension/refgrantvalidator	[no test files]
+?   	sigs.k8s.io/gwctl/pkg/extension/utils	[no test files]
+?   	sigs.k8s.io/gwctl/pkg/flags	[no test files]
+ok  	sigs.k8s.io/gwctl/pkg/policymanager	2.184s
+ok  	sigs.k8s.io/gwctl/pkg/printer	2.617s
+ok  	sigs.k8s.io/gwctl/pkg/topology	3.054s
+?   	sigs.k8s.io/gwctl/pkg/topology/gateway	[no test files]
+?   	sigs.k8s.io/gwctl/pkg/version	[no test files]
+ok  	sigs.k8s.io/gwctl/test/integration	2.943s
+###
+### exit_code: 0
+### duration:  22s
+### finished:  2026-08-18T01:27:35Z

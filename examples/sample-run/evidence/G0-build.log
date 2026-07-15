@@ -1,0 +1,10 @@
+### gate:     G0 (build)
+### command:  go build ./...
+### workdir:  <workspace>/gwctl
+### expect:   zero exit
+### started:  2026-08-18T01:26:58Z
+###
+###
+### exit_code: 0
+### duration:  15s
+### finished:  2026-08-18T01:27:13Z

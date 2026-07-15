@@ -1,0 +1,18 @@
+### gate:     G4 (diff-hygiene)
+### command:  ${CLAUDE_PLUGIN_ROOT}/scripts/lib/diff-hygiene.sh 'HEAD'
+### workdir:  <workspace>/gwctl
+### expect:   zero exit
+### started:  2026-08-18T01:27:35Z
+###
+=== files in diff vs HEAD ===
+
+
+=== diffstat ===
+
+grep: repetition-operator operand invalid
+
+G4: clean
+###
+### exit_code: 0
+### duration:  0s
+### finished:  2026-08-18T01:27:35Z
