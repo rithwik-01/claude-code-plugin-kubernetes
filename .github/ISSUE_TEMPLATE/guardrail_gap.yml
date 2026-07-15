@@ -1,0 +1,37 @@
+name: Guardrail gap
+description: You found a way to get a publishing command past the hook
+labels: ["security", "priority"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the most important kind of report this project can receive.
+        The plugin's core promise is that it cannot commit, comment, or push on
+        its own. If you found a way around that, we want to know.
+
+        Please do not open a pull request that merely adds the case to the test
+        list — the hook itself needs fixing.
+  - type: textarea
+    id: command
+    attributes:
+      label: The exact command that was allowed through
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: How you observed it
+      description: |
+        Ideally the output of feeding it to the hook directly:
+
+        ```
+        jq -nc --arg c '<your command>' \
+          '{hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:$c}}' \
+          | bash plugins/k8s-contributor/hooks/scripts/guard-destructive.sh; echo "exit=$?"
+        ```
+
+        Exit 2 means blocked. Anything else is the gap.
+      render: shell
+    validations:
+      required: true

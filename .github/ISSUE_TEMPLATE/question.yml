@@ -1,0 +1,23 @@
+name: Question or documentation gap
+description: Something was unclear, or you could not find an answer
+labels: ["question", "documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        There is no question that is too basic here. If something confused you,
+        the documentation is at fault and the answer belongs in it.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+    validations:
+      required: true
+  - type: textarea
+    id: looked
+    attributes:
+      label: Where you looked first
+      description: |
+        Which docs or search terms you tried. This is genuinely useful — if a
+        search should have found this project and did not, that is worth
+        fixing on its own.
