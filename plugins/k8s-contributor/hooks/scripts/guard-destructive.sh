@@ -13,13 +13,22 @@
 # Everything therefore rests here. Nothing above this file is assumed.
 #
 # It also catches what deny rules structurally cannot: payloads inside
-#   bash -c "...", eval, $( ), backticks, xargs, a heredoc, or a script the
-# model just wrote. The command text is normalized first, so nesting and
-# quoting do not hide the payload.
+#   bash -c "...", eval, $( ), backticks, xargs, or a heredoc.
+# The command text is normalized first, so nesting and quoting do not hide the
+# payload.
 #
 # There is deliberately NO bypass. The `require_approval_before_commit`
 # userConfig option is read below only to state, explicitly, that setting it to
 # false changes nothing.
+#
+# KNOWN INSPECTION BOUNDARY: this hook sees the Bash command TEXT, so it cannot
+# see inside a script FILE that the command merely executes. `bash x.sh` is
+# opaque to it, even though a heredoc writing that same text is not. Scanning
+# executed files was considered and rejected for now: this repository's own
+# test suites carry publishing commands as test data, so content-scanning would
+# block them. The gap is documented in docs/architecture.md rather than papered
+# over. Anything published through that route is a rule violation, not an
+# approved action.
 #
 # Protocol (docs: code.claude.com/docs/en/hooks):
 #   stdin  = PreToolUse JSON, command at .tool_input.command
@@ -42,8 +51,8 @@ THERE IS NO FLAG, SETTING, OR ENVIRONMENT VARIABLE THAT DISABLES THIS.
 The plugin ships this hook as its enforcement layer; the
 require_approval_before_commit option cannot turn it off, and neither can a
 permissions allow-rule. Do NOT retry with a variant, a wrapper, a different
-tool, or a script that runs it later -- every one of those is blocked too, and
-attempting them is itself a violation of the rule.
+tool, or a script that runs it later. Attempting any of those is itself a
+violation of the rule, whether or not this hook happens to catch it.
 
 What to do instead: write the proposed action to the run state directory
 (artifacts/proposed-commits.md), print the exact command for the user to run
