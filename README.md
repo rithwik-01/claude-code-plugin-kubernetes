@@ -178,6 +178,13 @@ It normalizes command text before matching, so nesting inside `bash -c`,
 `$( )`, backticks, `xargs`, or a heredoc does not hide a payload, and it
 **fails closed**: a command it cannot parse is blocked.
 
+One boundary, stated plainly rather than glossed over: the hook inspects the
+**command text**, so it does not read inside a script *file* that a command
+merely executes. Content-scanning executed files was considered and rejected
+for now, because this repository's own test suites carry publishing commands as
+test data and would be blocked by it. See
+[what the hook does not see](docs/architecture.md#what-the-hook-does-not-see).
+
 `/k8s-setup` additionally offers to merge a `permissions.deny` block into your
 own settings, showing the exact diff first and writing only on explicit
 confirmation. That block is defense in depth. Declining it leaves you fully
@@ -315,6 +322,8 @@ Stated up front, because finding these out mid-run is worse.
 - **Nothing is cloned for you.** The plugin operates on clones already on disk.
 - **The plugin never pushes**, so your git and GitHub credentials are never
   exercised by it.
+- **The guardrail hook inspects command text, not the contents of scripts it
+  runs.** See [The approval guarantee](#the-approval-guarantee).
 
 ---
 

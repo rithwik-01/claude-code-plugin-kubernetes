@@ -113,6 +113,50 @@ nothing else does. It normalizes command text before matching, so `bash -c`,
 `scripts/prove-guardrails.sh` demonstrates this against a scratch project with
 no permission rules configured at all. It runs in CI.
 
+## What the hook does not see
+
+`guard-destructive.sh` receives the `PreToolUse` payload, whose
+`tool_input.command` is the **text of the Bash command**. Everything it can
+reason about comes from that string.
+
+That is enough to catch nesting, because the nested payload is still *in* the
+string: `bash -c "... git commit ..."`, `$( )`, backticks, `xargs`, and
+heredocs all normalize down to the same token stream as the plain command.
+
+It is **not** enough to catch a script file. `bash deploy.sh` is a short
+command whose meaning lives in a file the hook never opens. Writing that file
+through the `Write` tool is not content-inspected either, because
+`guard-scope.sh` checks the destination path rather than the bytes.
+
+Scanning executed files was considered and rejected for now. The check itself
+is easy to write -- resolve the interpreter's file argument, read it, run the
+existing normalization over its contents -- but its false-positive problem is
+not hypothetical: `hooks/scripts/test-hooks.sh` and `scripts/prove-guardrails.sh`
+both carry real publishing commands as test data. Content-scanning would block
+this project's own test suites, along with any user script that merely mentions
+a commit in a comment.
+
+So the boundary is documented rather than papered over:
+
+| Route | Inspected |
+|---|---|
+| `git commit -m x` | yes |
+| `bash -c "make test && git commit -am x"` | yes |
+| `$( )`, backticks, `xargs`, heredoc | yes |
+| `eval "$CMD"` | blocked outright, precisely because it cannot be inspected |
+| `bash script.sh` where the script commits | **no** |
+
+The last row is a rule violation on the model's part rather than an approved
+action. Every agent prompt and every skill states that wrapping a blocked
+command is itself a violation, and the hook's refusal message says so
+explicitly. But at that point it is enforced by instruction rather than
+mechanically, and the difference is worth knowing in advance rather than
+discovering later.
+
+If you want it closed in your own fork, the change is roughly fifteen lines in
+`guard-destructive.sh` plus an allowlist for the two test scripts. A pull
+request that closes it without breaking the suites is welcome.
+
 ## Guardrails
 
 | Hook | Event | Blocks |
