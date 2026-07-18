@@ -15,8 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq shellcheck
+      - name: Check required tooling is present
+        # jq and shellcheck ship with the ubuntu-latest runner image. Installing
+        # them via apt-get added roughly 20 seconds on a good day and hung
+        # indefinitely on a bad one, waiting on a dpkg lock. Assert instead.
+        run: |
+          set -euo pipefail
+          for t in jq shellcheck bash; do
+            command -v "$t" >/dev/null || { echo "missing required tool: $t"; exit 1; }
+            printf '  %-10s %s\n' "$t" "$(command -v "$t")"
+          done
 
       - name: Syntax-check every shell script
         run: |
