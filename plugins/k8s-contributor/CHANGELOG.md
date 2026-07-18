@@ -11,6 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > `version` in both `plugins/k8s-contributor/.claude-plugin/plugin.json` and
 > the matching entry in `.claude-plugin/marketplace.json`.
 
+## [0.1.1] — 2026-08-18
+
+### Fixed
+- Corrected an overstated claim in `guard-destructive.sh`. Its refusal message
+  said that a script wrapping a blocked command "is blocked too". That is not
+  true: the hook inspects the Bash command text, so `bash script.sh` is opaque
+  to it. The instruction not to wrap a blocked command stands, but it is
+  enforced by instruction at that point rather than mechanically, and the
+  message now says so accurately.
+
+### Added
+- `docs/architecture.md` gains a "What the hook does not see" section
+  documenting the inspection boundary, why content-scanning executed files was
+  rejected for now (this repository's own test suites carry publishing commands
+  as test data), and what closing it would take.
+- The README scopes its security claim to match, in both the approval-guarantee
+  section and the limits list.
+
+### Changed
+- CI uses `actions/checkout@v5`; v4 pins a deprecated Node runtime.
+
 ## [0.1.0] — 2026-08-17
 
 First release. Repackaged from a hand-rolled `.claude/` directory into an
