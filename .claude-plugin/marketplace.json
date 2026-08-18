@@ -12,7 +12,7 @@
       "source": "./plugins/k8s-contributor",
       "displayName": "Kubernetes Contributor",
       "description": "Triage, fix, and verify Kubernetes issues with a parallel agent graph. Evidence-based verification gates, and it never commits, comments, or pushes on its own.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "category": "development",
       "tags": [
         "claude-code",

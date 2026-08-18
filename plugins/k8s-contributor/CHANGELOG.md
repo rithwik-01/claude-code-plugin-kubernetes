@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > `version` in both `plugins/k8s-contributor/.claude-plugin/plugin.json` and
 > the matching entry in `.claude-plugin/marketplace.json`.
 
+## [0.1.2] — 2026-08-18
+
+### Changed
+- CI no longer installs `jq` and `shellcheck` via `apt-get` on `ubuntu-latest`. Both ship with the runner image; the `validate` workflow now asserts they are present instead. Installing added roughly 20 seconds on a good day and hung indefinitely on a bad one waiting on a `dpkg` lock.
+
 ## [0.1.1] — 2026-08-18
 
 ### Fixed
